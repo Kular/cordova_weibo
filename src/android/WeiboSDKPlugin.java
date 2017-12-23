@@ -65,14 +65,10 @@ public class WeiboSDKPlugin extends CordovaPlugin implements WbShareCallback {
             return ssoLogin(callbackContext);
         } else if (action.equalsIgnoreCase("logout")) {
             return logout(callbackContext);
-        } else if (action.equalsIgnoreCase("shareToWeibo")) {
-            return shareToWeibo(callbackContext, args);
+        } else if (action.equalsIgnoreCase("share")) {
+            return share(callbackContext, args);
         } else if (action.equalsIgnoreCase("checkClientInstalled")) {
             return checkClientInstalled(callbackContext);
-        } else if (action.equalsIgnoreCase("shareImageToWeibo")) {
-            return shareImageToWeibo(callbackContext,args);
-        } else if (action.equalsIgnoreCase("shareTextToWeibo")) {
-            return shareTextToWeibo(callbackContext,args);
         }
         return super.execute(action, args, callbackContext);
     }
@@ -128,75 +124,21 @@ public class WeiboSDKPlugin extends CordovaPlugin implements WbShareCallback {
         return true;
     }
 
-    /**
-     * 微博分享网页
-     *
-     * @param callbackContext
-     * @param args
-     * @return
-     */
-    private boolean shareToWeibo(final CallbackContext callbackContext,
-                                 final CordovaArgs args) {
+    private boolean share(final CallbackContext callbackContext, final CordovaArgs args) {
         currentCallbackContext = callbackContext;
         if (shareHandler == null) {
             shareHandler = new WbShareHandler(WeiboSDKPlugin.this.cordova.getActivity());
         }
         shareHandler.registerApp();
         cordova.getThreadPool().execute(new Runnable() {
-
             @Override
             public void run() {
-                sendMultiMessage(callbackContext,args);
+                send(callbackContext,args);
             }
         });
         return true;
     }
 
-    /**
-     * 微博图片分享
-     * @param callbackContext
-     * @param args
-     * @return
-     */
-    private boolean shareImageToWeibo(final CallbackContext callbackContext,
-        final CordovaArgs args) {
-        currentCallbackContext = callbackContext;
-        if (shareHandler == null) {
-            shareHandler = new WbShareHandler(WeiboSDKPlugin.this.cordova.getActivity());
-        }
-        shareHandler.registerApp();
-        cordova.getThreadPool().execute(new Runnable() {
-
-            @Override
-            public void run() {
-                sendImageMessage(callbackContext,args);
-            }
-        });
-        return true;
-    }
-
-    /**
-     * 分享文字到微博
-     * @param callbackContext
-     * @param args
-     * @return
-     */
-    private boolean shareTextToWeibo(final CallbackContext callbackContext,
-        final CordovaArgs args) {
-        currentCallbackContext = callbackContext;
-        if (shareHandler == null) {
-            shareHandler = new WbShareHandler(WeiboSDKPlugin.this.cordova.getActivity());
-        }
-        shareHandler.registerApp();
-        cordova.getThreadPool().execute(new Runnable() {
-
-            @Override
-            public void run() {
-                sendTextMessage(callbackContext,args);
-            }
-        });
-        return true;
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -206,93 +148,36 @@ public class WeiboSDKPlugin extends CordovaPlugin implements WbShareCallback {
         }
     }
 
-    /**
-     * 第三方应用发送请求消息到微博，唤起微博分享界面。
-     */
-    private void sendMultiMessage(final CallbackContext callbackContext, CordovaArgs args) {
+    private void send(final CallbackContext callbackContext, CordovaArgs args) {
         // 1. 初始化微博的分享消息
         WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
         final JSONObject data;
         try {
             data = args.getJSONObject(0);
-            String title = data.has("title")?  data.getString("title"): "";
-            String url = data.has("url")?  data.getString("url"): "";
-            String description = data.has("description")?  data.getString("description"): "";
-            String image = data.has("image")?  data.getString("image"): "";
-            Bitmap imageData = processImage(image);
-            //WebpageObject mediaObject = new WebpageObject();
-            //mediaObject.identify = Utility.generateGUID();
-            //mediaObject.title = title;
-            //mediaObject.description = description;
-            //mediaObject.actionUrl = url;
-            if (imageData != null) {
-                //注意：最终压缩过的缩略图大小不得超过 32kb。
-                ImageObject imageObject = new ImageObject();
-                imageObject.setImageObject(imageData);
-                weiboMessage.imageObject = imageObject;
-               // mediaObject.setThumbImage(imageData);
-            }
-           // weiboMessage.mediaObject = mediaObject;
-            TextObject textObject = new TextObject();
-            textObject.text = description + " " + url;
-            textObject.title = title;
-            weiboMessage.textObject = textObject;
-            shareHandler.shareMessage(weiboMessage, false);
-        } catch (JSONException e) {
-            WeiboSDKPlugin.this.webView.sendPluginResult(new PluginResult(
-                    PluginResult.Status.ERROR, PARAM_ERROR),
-                callbackContext.getCallbackId());
-        }
-    }
 
-    /**
-     * 组装图片分享消息
-     * @param callbackContext
-     * @param args
-     */
-    private void sendImageMessage(final CallbackContext callbackContext, CordovaArgs args) {
-        WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
-        final JSONObject data;
-        try {
-            data = args.getJSONObject(0);
-            String image = data.has("image")?  data.getString("image"): "";
-            Bitmap imageData = processImage(image);
-            if (imageData != null) {
-                //注意：最终压缩过的缩略图大小不得超过 32kb。
-                ImageObject imageObject = new ImageObject();
-                imageObject.setImageObject(imageData);
-                weiboMessage.imageObject = imageObject;
-            }
-            shareHandler.shareMessage(weiboMessage, false);
-        } catch (JSONException e) {
-            WeiboSDKPlugin.this.webView.sendPluginResult(new PluginResult(
-                    PluginResult.Status.ERROR, PARAM_ERROR),
-                callbackContext.getCallbackId());
-        }
-    }
-
-    /**
-     * 组装微博文字分享消息
-     * @param callbackContext
-     * @param args
-     */
-    private void sendTextMessage(final CallbackContext callbackContext, CordovaArgs args) {
-        // 1. 初始化微博的分享消息
-        WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
-        final JSONObject data;
-        try {
-            data = args.getJSONObject(0);
             String text = data.has("text")?  data.getString("text"): "";
             TextObject textObject = new TextObject();
             textObject.text = text;
             weiboMessage.textObject = textObject;
+
+            String image = data.has("image")?  data.getString("image"): "";
+            Bitmap imageData = processImage(image);
+            if (imageData != null) {
+                //注意：最终压缩过的缩略图大小不得超过 32kb。
+                ImageObject imageObject = new ImageObject();
+                imageObject.setImageObject(imageData);
+                weiboMessage.imageObject = imageObject;
+            }
+
             shareHandler.shareMessage(weiboMessage, false);
         } catch (JSONException e) {
-            WeiboSDKPlugin.this.webView.sendPluginResult(new PluginResult(
-                    PluginResult.Status.ERROR, PARAM_ERROR),
-                callbackContext.getCallbackId());
+            WeiboSDKPlugin.this.webView.sendPluginResult(
+                new PluginResult(PluginResult.Status.ERROR, PARAM_ERROR),
+                callbackContext.getCallbackId()
+            );
         }
     }
+
     /**
      * 组装JSON
      *
