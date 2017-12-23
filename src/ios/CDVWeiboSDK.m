@@ -51,7 +51,7 @@ NSString *WEIBO_USER_CANCEL_INSTALL = @"user cancel install weibo";
     self.callbackId = command.callbackId;
     WBAuthorizeRequest *request = [WBAuthorizeRequest request];
     request.redirectURI = self.redirectURI;
-    request.scope = @"all";
+
     request.userInfo = @{ @"SSO_From" : @"CDVWeiboSDK",
                           @"Other_Info_1" : [NSNumber numberWithInt:123],
                           @"Other_Info_2" : @[ @"obj1", @"obj2" ],
@@ -89,7 +89,7 @@ NSString *WEIBO_USER_CANCEL_INSTALL = @"user cancel install weibo";
      self.callbackId = command.callbackId;
      WBAuthorizeRequest *authRequest = [WBAuthorizeRequest request];
      authRequest.redirectURI = self.redirectURI;
-     authRequest.scope = @"all";
+
      NSDictionary *params = [command.arguments objectAtIndex:0];
      WBMessageObject *message = [WBMessageObject message];
      WBWebpageObject *webpage = [WBWebpageObject object];
@@ -119,7 +119,7 @@ NSString *WEIBO_USER_CANCEL_INSTALL = @"user cancel install weibo";
     self.callbackId = command.callbackId;
     WBAuthorizeRequest *authRequest = [WBAuthorizeRequest request];
     authRequest.redirectURI = self.redirectURI;
-    authRequest.scope = @"all";
+
     NSDictionary *params = [command.arguments objectAtIndex:0];
     WBMessageObject *message = [WBMessageObject message];
     WBImageObject *imageObject = [WBImageObject object];
@@ -145,7 +145,7 @@ NSString *WEIBO_USER_CANCEL_INSTALL = @"user cancel install weibo";
     self.callbackId = command.callbackId;
     WBAuthorizeRequest *authRequest = [WBAuthorizeRequest request];
     authRequest.redirectURI = self.redirectURI;
-    authRequest.scope = @"all";
+
     NSDictionary *params = [command.arguments objectAtIndex:0];
     WBMessageObject *message = [WBMessageObject message];
     NSString *text = [self check:@"text" in:params];

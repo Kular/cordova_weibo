@@ -33,9 +33,7 @@ import org.json.JSONObject;
 
 public class WeiboSDKPlugin extends CordovaPlugin implements WbShareCallback {
 
-    private static final String SCOPE = "email,direct_messages_read,direct_messages_write,"
-            + "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
-            + "follow_app_official_microblog," + "invitation_write";
+    private static final String SCOPE = "";
     private static final String WEBIO_APP_ID = "weibo_app_id";
     private static final String WEBIO_REDIRECT_URL = "redirecturi";
     private static final String DEFAULT_URL = "https://api.weibo.com/oauth2/default.html";
@@ -450,8 +448,8 @@ public class WeiboSDKPlugin extends CordovaPlugin implements WbShareCallback {
         @Override
         public void onFailure(WbConnectErrorMessage errorMessage) {
             WeiboSDKPlugin.this.webView.sendPluginResult(new PluginResult(
-                    PluginResult.Status.ERROR, WEIBO_EXCEPTION),
-                currentCallbackContext.getCallbackId());
+                    PluginResult.Status.ERROR, errorMessage.getErrorMessage()),
+            currentCallbackContext.getCallbackId());
         }
     }
 }
