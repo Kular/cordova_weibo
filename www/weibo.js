@@ -9,22 +9,10 @@ module.exports = {
 	logout:function(successCallback, errorCallback){
 		cordova.exec(successCallback, errorCallback, "WeiboSDK", "logout", []);
 	},
-	shareToWeibo:function(successCallback, errorCallback, args){
+	share:function(successCallback, errorCallback, args){
 		if(args == undefined){
 			args = {};
 		}
-		cordova.exec(successCallback, errorCallback, "WeiboSDK", "shareToWeibo", [args]);
-	},
-	shareImageToWeibo:function(successCallback, errorCallback, args){
-		if(args == undefined){
-			args = {};
-		}
-		cordova.exec(successCallback, errorCallback, "WeiboSDK", "shareImageToWeibo", [args]);
-	},
-	shareTextToWeibo:function(successCallback, errorCallback, args){
-		if(args == undefined){
-			args = {};
-		}
-		cordova.exec(successCallback, errorCallback, "WeiboSDK", "shareTextToWeibo", [args]);
+		cordova.exec(successCallback, errorCallback, "WeiboSDK", "share", [args]);
 	}
 };

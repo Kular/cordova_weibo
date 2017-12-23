@@ -11,12 +11,8 @@
 
 - (void)logout:(CDVInvokedUrlCommand *)command;
 
-- (void)shareToWeibo:(CDVInvokedUrlCommand *)command;
+- (void)share:(CDVInvokedUrlCommand *)command;
 
 - (void)checkClientInstalled:(CDVInvokedUrlCommand *)command;
-
-- (void)shareImageToWeibo:(CDVInvokedUrlCommand *)command;
-
-- (void)shareTextToWeibo:(CDVInvokedUrlCommand *)command;
 
 @end

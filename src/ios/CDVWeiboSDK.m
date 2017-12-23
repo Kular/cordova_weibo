@@ -80,76 +80,26 @@ NSString *WEIBO_USER_CANCEL_INSTALL = @"user cancel install weibo";
     }
 }
 
-/**
- *  分享网页到微博
- *
- *  @param command CDVInvokedUrlCommand
- */
- - (void)shareToWeibo:(CDVInvokedUrlCommand *)command {
-     self.callbackId = command.callbackId;
-     WBAuthorizeRequest *authRequest = [WBAuthorizeRequest request];
-     authRequest.redirectURI = self.redirectURI;
-
-     NSDictionary *params = [command.arguments objectAtIndex:0];
-     WBMessageObject *message = [WBMessageObject message];
-     WBWebpageObject *webpage = [WBWebpageObject object];
-     webpage.objectID = [NSString stringWithFormat:@"%f", [[NSDate date] timeIntervalSince1970]];
-     webpage.title = [self check:@"title" in:params];
-     webpage.description = [NSString stringWithFormat:[self check:@"description" in:params], [[NSDate date] timeIntervalSince1970]];
-     webpage.webpageUrl = [self check:@"url" in:params];
-     NSString *image = [self check:@"image" in:params];
-     NSData *imageData = [self processImage:image];
-     webpage.thumbnailData = imageData;
-     message.mediaObject = webpage;
-     NSUserDefaults *saveDefaults = [NSUserDefaults standardUserDefaults];
-     NSString *token = [saveDefaults objectForKey:@"access_token"];
-     WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authRequest access_token:token];
-     request.userInfo = @{ @"ShareMessageFrom" : @"CDVWeiboSDK",
-                           @"Other_Info_1" : [NSNumber numberWithInt:123],
-                           @"Other_Info_2" : @[ @"obj1", @"obj2" ],
-                           @"Other_Info_3" : @{@"key1" : @"obj1", @"key2" : @"obj2"} };
-     [WeiboSDK sendRequest:request];
- }
-/**
- *  分享图片到微博
- *
- *  @param command CDVInvokedUrlCommand
- */
-- (void)shareImageToWeibo:(CDVInvokedUrlCommand *)command {
+- (void)share:(CDVInvokedUrlCommand *)command {
     self.callbackId = command.callbackId;
     WBAuthorizeRequest *authRequest = [WBAuthorizeRequest request];
     authRequest.redirectURI = self.redirectURI;
 
     NSDictionary *params = [command.arguments objectAtIndex:0];
     WBMessageObject *message = [WBMessageObject message];
+
+    // Set Text
+    NSString *text = [self check:@"text" in:params];
+    message.text = text;
+
+    // Set Image
     WBImageObject *imageObject = [WBImageObject object];
     NSString *image = [self check:@"image" in:params];
     NSData *imageData = [self processImage:image];
     imageObject.imageData = imageData;
     message.imageObject = imageObject;
-    NSUserDefaults *saveDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *token = [saveDefaults objectForKey:@"access_token"];
-    WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authRequest access_token:token];
-    request.userInfo = @{ @"ShareMessageFrom" : @"CDVWeiboSDK",
-                          @"Other_Info_1" : [NSNumber numberWithInt:123],
-                          @"Other_Info_2" : @[ @"obj1", @"obj2" ],
-                          @"Other_Info_3" : @{@"key1" : @"obj1", @"key2" : @"obj2"} };
-    [WeiboSDK sendRequest:request];
-}
-/**
- *  分享文字到微博
- *
- *  @param command CDVInvokedUrlCommand
- */
-- (void)shareTextToWeibo:(CDVInvokedUrlCommand *)command {
-    self.callbackId = command.callbackId;
-    WBAuthorizeRequest *authRequest = [WBAuthorizeRequest request];
-    authRequest.redirectURI = self.redirectURI;
 
-    NSDictionary *params = [command.arguments objectAtIndex:0];
-    WBMessageObject *message = [WBMessageObject message];
-    NSString *text = [self check:@"text" in:params];
-    message.text = text;
+    // Call API
     NSUserDefaults *saveDefaults = [NSUserDefaults standardUserDefaults];
     NSString *token = [saveDefaults objectForKey:@"access_token"];
     WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authRequest access_token:token];
