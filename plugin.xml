@@ -8,8 +8,8 @@
   <description>A Cordova wrapper around the Sina WeiboSDK for Android and iOS. Provides access to ssoLogin, WeiboShating etc</description>
   <license>MIT</license>
   <keywords>Cordova,Weibo</keywords>
-  <repo>https://github.com/iVanPan/cordova_weibo.git</repo>
-  <issue>https://github.com/iVanPan/cordova_weibo/issues</issue>
+  <repo>https://github.com/Kular/cordova_weibo.git</repo>
+  <issue>https://github.com/Kular/cordova_weibo/issues</issue>
 
   <preference name="WEIBO_APP_ID" />
   <!--require cordova version -->
